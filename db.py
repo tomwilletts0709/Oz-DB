@@ -18,6 +18,14 @@ class InputBuffer:
     buffer_length: int 
     input_length: int
 
+@dataclass 
+class StatementType(enum.Enum): 
+    STATEMENT_INSERT = int = 1
+    STATEMENT_SELECT = int = 2
+
+def meta_command_result() -> MetaCommandResult:
+
+
 def new_input_buffer() -> InputBuffer:
     input_buffer = InputBuffer()
     input_buffer.buffer_length = 0
