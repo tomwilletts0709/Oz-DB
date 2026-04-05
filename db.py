@@ -1,5 +1,16 @@
 import sys
+import enum
 from dataclasses import dataclass
+
+@dataclass 
+class MetaCommandResult(enum.Enum):
+    META_COMMAND_SUCCESS = int = 1
+    META_COMMAND_UNRECOGNIZED_COMMAND = int = 2
+
+@dataclass
+class PrepareResult(enum.Enum): 
+    PREPARE_SUCCESS = int = 1
+    PREPARE_UNRECOGNIZED_STATEMENT = int = 2
 
 @dataclass 
 class InputBuffer: 
