@@ -32,6 +32,14 @@ def meta_command_result() -> MetaCommandResult:
         sys.exit(0)
     else: 
         return MetaCommandResult.META_COMMAND_UNRECOGNIZED_COMMAND
+    
+def execute_statement(statement_type: StatementType):
+    match statement_type:
+        case StatementType.STATEMENT_INSERT:
+            print("This is where we would do an insert")
+        case StatementType.STATEMENT_SELECT:
+            print("This is where we would do a select")
+
 
 
 def new_input_buffer() -> InputBuffer:
@@ -69,4 +77,18 @@ def main():
             sys.exit(0)
         else: 
             print(f"unrecognized command: {input_buffer.buffer}")
+
+
+def prepare_statement(input_buffer) -> PrepareResult:
+    match PrepareResult:
+        case PrepareResult.PREPARE_SUCCESS:
+            print("This is where we would do an insert")
+        case PrepareResult.PREPARE_UNRECOGNIZED_STATEMENT:
+            print("This is where we would do a select")
+    return PrepareResult.PREPARE_SUCCESS
+
+
+def execute_statement(statement_type: StatementType):
+    print(f"executed: {statement_type}")
+
 
