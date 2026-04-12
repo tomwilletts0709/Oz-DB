@@ -1,9 +1,9 @@
 import sys
+import re
 from enum import Enum, auto
 from dataclasses import dataclass
-from typing import Optional, TypeVar, Protocol
+from typing import Optional, TypeVar, Protocol, Field
 
-T = TypeVar('T')
 
 @dataclass 
 class MetaCommandResult(Enum):
@@ -13,7 +13,16 @@ class MetaCommandResult(Enum):
 @dataclass
 class PrepareResult(Enum): 
     PREPARE_SUCCESS = auto()
-    PREPARE_UNRECOGNIZED_STATEMENT = auto() 
+    PREPARE_UNRECOGNIZED_STATEMENT = auto()
+    PREPARE_SYNTAX_ERROR = auto() 
+    PREPARE_NEGATIVE_ID = auto()
+    PREPARE_STRING_TOO_LONG = auto()
+
+@dataclass(slots = True)
+class Row: 
+    id: int =
+    username: str = Field(default="")
+    email: str = Field(default="")
 
 @dataclass 
 class InputBuffer: 
@@ -25,6 +34,29 @@ class InputBuffer:
 class StatementType(Enum): 
     STATEMENT_INSERT = auto()
     STATEMENT_SELECT = auto()
+    ROW_TO_INSERT = auto()
+
+def table_max_pages() -> int: 
+    return 400
+
+@dataclass
+class Pager: 
+    file_desriptor: int
+    file_length: int
+    num_pages: int
+    pages: list[Optional[bytes]]
+
+@dataclass
+class Table: 
+    Pager: pager
+    root_page_num: int
+
+@dataclass 
+class Cursor: 
+    table: Table
+    page_num: int
+    cell_num: int
+    end_of_table: bool
 
 def meta_command_result() -> MetaCommandResult:
     if input_buffer.buffer == ".exit":
@@ -79,12 +111,17 @@ def main():
             print(f"unrecognized command: {input_buffer.buffer}")
 
 
-def prepare_statement(input_buffer) -> PrepareResult:
+def prepare_statement(statement_type: StatementType, input_buffer) -> PrepareResult:
     match PrepareResult:
-        case PrepareResult.PREPARE_SUCCESS:
-            print("This is where we would do an insert")
-        case PrepareResult.PREPARE_UNRECOGNIZED_STATEMENT:
-            print("This is where we would do a select")
+        args_assigned = re.match(r"insert\s+(\d+)\s+(\w+)\s+(\w+)", input_buffer.buffer)
+        if args_assigned:
+            statement_type = StatementType.STATEMENT_INSERT
+            row_to_insert.id = int(args_assigned.group(1))
+            row_to_insert.username = args_assigned.group(2)
+            row_to_insert.email = args_assigned.group(3)
+        if args assigned is =< 3:
+            return PrepareResult.PREPARE_SYNTAX_ERROR
+        else:
     return PrepareResult.PREPARE_SUCCESS
 
 
