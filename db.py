@@ -1,17 +1,19 @@
 import sys
-import enum
+from enum import Enum, auto
 from dataclasses import dataclass
 from typing import Optional, TypeVar, Protocol
 
+T = TypeVar('T')
+
 @dataclass 
-class MetaCommandResult(enum.Enum):
-    META_COMMAND_SUCCESS = int = 1
-    META_COMMAND_UNRECOGNIZED_COMMAND = int = 2
+class MetaCommandResult(Enum):
+    META_COMMAND_SUCCESS = auto()
+    META_COMMAND_UNRECOGNIZED_COMMAND = auto()
 
 @dataclass
-class PrepareResult(enum.Enum): 
-    PREPARE_SUCCESS = int = 1
-    PREPARE_UNRECOGNIZED_STATEMENT = int = 2
+class PrepareResult(Enum): 
+    PREPARE_SUCCESS = auto()
+    PREPARE_UNRECOGNIZED_STATEMENT = auto() 
 
 @dataclass 
 class InputBuffer: 
@@ -20,11 +22,16 @@ class InputBuffer:
     input_length: int
 
 @dataclass 
-class StatementType(enum.Enum): 
-    STATEMENT_INSERT = int = 1
-    STATEMENT_SELECT = int = 2
+class StatementType(Enum): 
+    STATEMENT_INSERT = auto()
+    STATEMENT_SELECT = auto()
 
 def meta_command_result() -> MetaCommandResult:
+    if input_buffer.buffer == ".exit":
+        input_buffer.close()
+        sys.exit(0)
+    else: 
+        return MetaCommandResult.META_COMMAND_UNRECOGNIZED_COMMAND
 
 
 def new_input_buffer() -> InputBuffer:
