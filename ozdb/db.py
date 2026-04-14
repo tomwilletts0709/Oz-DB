@@ -67,7 +67,7 @@ EMAIL_SIZE = 255
 ROW_FORMAT = f"{ID_SIZE}s{USERNAME_SIZE}s{EMAIL_SIZE}s"
 ROW_SIZE = struct.calcsize(ROW_FORMAT)
 
-PAGTE_SIZE = 4096
+PAGE_SIZE = 4096
 ROWS_PER_PAGE = PAGTE_SIZE // ROW_SIZE
 TABLE_MAX_ROWS = ROWS_PER_PAGE * table_max_pages()
 
@@ -81,6 +81,9 @@ def deserialize_row(data: bytes) -> Row:
 
 def row_slot(table: Table, row_num: int) -> int:
     page_num = row_num // ROWS_PER_PAGE
+    page = table.Pager.pages[page_num]
+    if page is None: 
+        page = 
 
 
 
