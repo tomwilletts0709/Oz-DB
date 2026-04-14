@@ -83,8 +83,11 @@ def row_slot(table: Table, row_num: int) -> int:
     page_num = row_num // ROWS_PER_PAGE
     page = table.Pager.pages[page_num]
     if page is None: 
-        page = 
-
+        page = bytearray(PAGE_SIZE)
+        row_offset = row_num % ROWS_PER_PAGE
+        byte_offset = row_offset * ROW_SIZE
+        return page + byte_offset
+    
 
 
 def meta_command_result() -> MetaCommandResult:
@@ -156,6 +159,3 @@ def prepare_statement(statement_type: StatementType, input_buffer) -> PrepareRes
 
 def execute_statement(statement_type: StatementType):
     print(f"executed: {statement_type}")
-
-
-def memcpy
