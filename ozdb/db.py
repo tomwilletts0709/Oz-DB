@@ -51,6 +51,7 @@ class Pager:
 class Table: 
     Pager: pager
     root_page_num: int
+    num_rows: int
 
 @dataclass 
 class Cursor: 
@@ -62,6 +63,26 @@ class Cursor:
 ID_SIZE = 4
 USERNAME_SIZE = 32
 EMAIL_SIZE = 255
+
+ROW_FORMAT = f"{ID_SIZE}s{USERNAME_SIZE}s{EMAIL_SIZE}s"
+ROW_SIZE = struct.calcsize(ROW_FORMAT)
+
+PAGTE_SIZE = 4096
+ROWS_PER_PAGE = PAGTE_SIZE // ROW_SIZE
+TABLE_MAX_ROWS = ROWS_PER_PAGE * table_max_pages()
+
+
+def serialize_row(row: Row) -> bytes:
+    return struct.pack(ROW_FORMAT, row.id.to_bytes(ID_SIZE, 'little'), row.username.encode('utf-8'), row.email.encode('utf-8'))
+
+def deserialize_row(data: bytes) -> Row:
+    unpacked_data = struct.unpack(ROW_FORMAT, data)
+    return Row(id=int.from_bytes(unpacked_data[0], 'little'), username=unpacked_data[1].decode('utf-8').rstrip('\x00'), email=unpacked_data[2].decode('utf-8').rstrip('\x00'))
+
+def row_slot(table: Table, row_num: int) -> int:
+    page_num = row_num // ROWS_PER_PAGE
+
+
 
 def meta_command_result() -> MetaCommandResult:
     if input_buffer.buffer == ".exit":
