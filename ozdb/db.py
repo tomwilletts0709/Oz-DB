@@ -1,8 +1,9 @@
 import sys
 import re
+import struct
 from enum import Enum, auto
 from dataclasses import dataclass
-from typing import Optional, TypeVar, Protocol, Field
+from typing import Optional, Protocol, Field
 
 
 @dataclass 
@@ -57,6 +58,10 @@ class Cursor:
     page_num: int
     cell_num: int
     end_of_table: bool
+
+ID_SIZE = 4
+USERNAME_SIZE = 32
+EMAIL_SIZE = 255
 
 def meta_command_result() -> MetaCommandResult:
     if input_buffer.buffer == ".exit":
@@ -129,3 +134,4 @@ def execute_statement(statement_type: StatementType):
     print(f"executed: {statement_type}")
 
 
+def memcpy

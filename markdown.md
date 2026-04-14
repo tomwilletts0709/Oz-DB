@@ -4,24 +4,26 @@ Date: 11.04.2026
 
 ## What this project is
 
-Oz DB is a small database prototype. The current direction is an in-memory database that starts with a single hard-coded table and supports two basic operations:
+Oz DB is a database prototype that is still being shaped. The current direction is an in-memory system with a single hard-coded table and support for two core operations:
 
 - inserting a row
-- printing all stored rows
+- printing all rows
 
-The codebase is still early, so several modules are scaffolds rather than finished implementations.
+The implementation is still early, but the code now sketches more of the database internals than it did before.
 
 ## File Overview
 
 ### `ozdb/db.py`
 
-This is the main entry point and the clearest picture of the current database loop.
+This is the main work-in-progress module and currently shows the broadest view of the system.
 
-It defines a few core concepts:
+It now includes:
 
-- `MetaCommandResult`, `PrepareResult`, and `StatementType` enums for representing command and statement states
-- `InputBuffer`, which is meant to hold the current line of user input
-- helper functions for the REPL-style loop, including:
+- command and prepare-state enums such as `MetaCommandResult`, `PrepareResult`, and `StatementType`
+- a `Row` dataclass for the table shape
+- `Pager`, `Table`, and `Cursor` dataclasses that suggest a move toward page-based storage
+- `InputBuffer` for line input
+- helper functions for the command loop, including:
   - `new_input_buffer()`
   - `print_prompt()`
   - `read_input()`
@@ -29,47 +31,51 @@ It defines a few core concepts:
   - `prepare_statement()`
   - `execute_statement()`
 
-At the moment, this file is still a prototype. Some functions are placeholders, and a few lines look unfinished or inconsistent, which suggests the command-processing flow is still being built out.
+This file is still very unfinished. Some functions are placeholders, some code paths are inconsistent, and the current `prepare_statement()` logic looks like a draft rather than a working parser.
 
 ### `ozdb/storage.py`
 
-This module is intended to handle data storage behind the database interface.
+This module is meant to wrap storage behavior behind the database layer.
 
 The `Storage` class currently:
 
-- stores a `db` reference
-- keeps an in-memory `data` dictionary
-- includes methods that are clearly meant for save/load/read behavior
+- keeps a `db` reference
+- stores in-memory `data`
+- sketches methods for saving, loading, deleting, and reading pages
 
-This file is also incomplete right now. The structure shows the intended direction, but the method definitions still need cleanup and finishing.
+The structure is there, but the implementation still needs cleanup. Right now it reads more like a design stub than a finished storage layer.
 
 ### `ozdb/tokenizer.py`
 
-This file is currently empty.
+This file is empty for now.
 
-Based on the project direction, it will likely become responsible for breaking user input into tokens before statements are prepared and executed.
+It is likely intended to become the tokenizer that breaks user input into pieces before statement preparation.
 
 ### `ozdb/table.py`
 
-This file is currently empty.
+This file is empty for now.
 
-It will probably hold table-related logic once the database starts modelling rows, columns, and table operations more explicitly.
+It should eventually hold table-specific behavior once the project moves past the first database skeleton.
 
 ### `tests/test_db.py`
 
-This test file is currently empty.
+This file is empty for now.
 
-It is ready to become the place for unit tests around parsing, storage behavior, and the database command loop.
+It is ready for tests around parsing, command handling, and any future insert/select flow.
+
+### `pyproject.toml`
+
+This file is currently empty, so there is no visible project metadata or dependency configuration in place yet.
 
 ### `oz_db_changelogs.md`
 
-This file contains the current project notes and target features. It says the database should:
+This file still captures the original target shape of the project. It says the database should:
 
 - support inserting a row and printing all rows
-- stay in memory only, with no disk persistence
-- work with a single hard-coded table
+- stay in memory only, with no persistence to disk
+- use a single hard-coded table
 
-It also includes the intended table shape:
+It also records the intended schema:
 
 - `id` as an integer
 - `username` as `varchar(32)`
@@ -77,17 +83,18 @@ It also includes the intended table shape:
 
 ## Current State
 
-The codebase is at an early exploratory stage. The broad architecture is visible, but the implementation is not yet complete.
+The codebase is clearly moving from a minimal REPL prototype toward a more database-shaped design. The pager/table/cursor pieces are visible now, but most of the implementation is still incomplete.
 
-Right now, the main themes are:
+The main themes are:
 
-- a REPL-style database loop in `db.py`
-- an in-memory storage layer in `storage.py`
-- future parsing and table logic waiting to be filled in
+- a command loop and statement parser in `ozdb/db.py`
+- a storage wrapper in `ozdb/storage.py`
+- planned tokenizer and table modules
+- no tests or packaging setup yet
 
 ## Suggested Next Steps
 
-- clean up the command loop in `ozdb/db.py`
-- define the tokenizer and statement preparation flow
-- flesh out the hard-coded table model
-- add tests for the first working insert/select path
+- finish and simplify the command/prepare flow in `ozdb/db.py`
+- decide whether the pager/table/cursor model is the intended direction and make it consistent
+- implement the tokenizer and table logic
+- add a first test file once the insert/select path is stable
