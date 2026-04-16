@@ -121,10 +121,9 @@ def meta_command_result() -> MetaCommandResult:
         return MetaCommandResult.META_COMMAND_UNRECOGNIZED_COMMAND
     
 def execute_statement(statement_type: StatementType):
-    match statement_type:
-        case StatementType.STATEMENT_INSERT:
+        if statement_type == StatementType.STATEMENT_INSERT:
             print("This is where we would do an insert")
-        case StatementType.STATEMENT_SELECT:
+        elif statement_type == StatementType.STATEMENT_SELECT:
             print("This is where we would do a select")
 
 
