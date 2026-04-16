@@ -35,6 +35,8 @@ class StatementType(Enum):
     STATEMENT_INSERT = auto()
     STATEMENT_SELECT = auto()
     ROW_TO_INSERT = auto()
+    EXECUTE_SUCCESS = auto()
+
 
 def table_max_pages() -> int: 
     return 400
@@ -91,7 +93,9 @@ def new_table() -> Table:
     pass 
 
 def free_table(table: Table) -> None: 
-    for i in 
+    for i in range(table.Pager.num_pages): 
+        if table.Pager.pages[i] is not None: 
+            del table.Pager.pages[i]
 
 
 def meta_command_result() -> MetaCommandResult:
@@ -139,7 +143,7 @@ def main():
         print_prompt()
         read_input(input_buffer)
 
-        if input_buffer.buffer == "exit": 
+        if input_buffer.buffer == ".exit": 
             close_input_buffer(input_buffer)
             sys.exit(0)
         else: 
