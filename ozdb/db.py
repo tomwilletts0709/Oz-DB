@@ -20,18 +20,17 @@ class PrepareResult(Enum):
 
 @dataclass(slots = True)
 class Row: 
-    id: int =
-    username: str = field(default="")
-    email: str = field(default="")  
+    id: int
+    username: str
+    email: str
 
 @dataclass 
 class InputBuffer: 
-    buffer: str = None
+    buffer: str
     buffer_length: int 
     input_length: int
 
-@dataclass 
-class StatementType(Enum): 
+class StatementType(Enum):
     STATEMENT_INSERT = auto()
     STATEMENT_SELECT = auto()
     ROW_TO_INSERT = auto()
@@ -43,7 +42,7 @@ def table_max_pages() -> int:
 
 @dataclass
 class Pager: 
-    file_desriptor: int
+    file_descriptor: int
     file_length: int
     num_pages: int
     pages: list[Optional[bytes]]
@@ -69,7 +68,7 @@ ROW_FORMAT = f"{ID_SIZE}s{USERNAME_SIZE}s{EMAIL_SIZE}s"
 ROW_SIZE = struct.calcsize(ROW_FORMAT)
 
 PAGE_SIZE = 4096
-ROWS_PER_PAGE = PAGTE_SIZE // ROW_SIZE
+ROWS_PER_PAGE = PAGE_SIZE // ROW_SIZE
 TABLE_MAX_ROWS = ROWS_PER_PAGE * table_max_pages()
 
 
@@ -125,7 +124,7 @@ def print_prompt():
 def read_input(input_buffer): 
     bytes_read = sys.stdin.readline()
     input_buffer.buffer = bytes_read.strip()
-    if bytes_read is <= 0: 
+    if bytes_read <= 0:
         print("Error reading input")
         sys.exit(1)
     
@@ -154,14 +153,15 @@ def prepare_statement(statement_type: StatementType, input_buffer) -> PrepareRes
     match PrepareResult:
         args_assigned = re.match(r"insert\s+(\d+)\s+(\w+)\s+(\w+)", input_buffer.buffer)
         if args_assigned:
-            statement_type = StatementType.STATEMENT_INSERT
-            row_to_insert.id = int(args_assigned.group(1))
-            row_to_insert.username = args_assigned.group(2)
-            row_to_insert.email = args_assigned.group(3)
-        if args assigned is =< 3:
+        case statement_type = StatementType.STATEMENT_INSERT
+            print ("This is where we would prepare an insert statement")
+        case row_to_insert.id = int(args_assigned.group(1))
+                row_to_insert.username = args_assigned.group(2)
+                row_to_insert.email = args_assigned.group(3)
+        if args_assigned <= 3:
             return PrepareResult.PREPARE_SYNTAX_ERROR
         else:
-    return PrepareResult.PREPARE_SUCCESS
+            return PrepareResult.PREPARE_SUCCESS
 
 
 def execute_insert(statement_type: StatementType, table: Table, row_to_insert: Row) -> None:

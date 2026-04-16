@@ -24,7 +24,7 @@ class Keyword(Token):
 
 class Tokenizer: 
     def __init__(self, text: str) -> None: 
-        self.text text
+        self.text = text
         self.position = 0 
     
     def tokenize(self) -> List[Token]: 
