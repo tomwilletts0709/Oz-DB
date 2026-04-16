@@ -9,22 +9,22 @@ class Storage:
         self.db = db    
         self.data = data if data is not None else {}
 
-        def save_data(self, data: dict) -> None:
-            """this method saves the data to the database"""
-            self.data.update(data)
-            self.db.save(self.data)
+    def save_data(self, data: dict) -> None:
+        """this method saves the data to the database"""
+        self.data.update(data)
+        self.db.save(self.data)
 
-        def load_data(self) -> dict: 
-            """this method loads the data from the database"""
-            self.data = self.db.load()
-            return self.data
+    def load_data(self) -> dict: 
+        """this method loads the data from the database"""
+        self.data = self.db.load()
+        return self.data
         
-        def delete_data(self, )-> None: 
-            """this method deletes the data from the database"""
-            self.data = {}
-            self.db.delete()
-        
+    def delete_data(self, )-> None: 
+        """this method deletes the data from the database"""
+        self.data = {}
+        self.db.delete()
+    
 
-        def read_page(self, page_id: str) -> dict: 
-            """this method reads a page from the database"""
-            return self.data.get(page_id, {})
+    def read_page(self, page_id: str) -> dict: 
+        """this method reads a page from the database"""
+        return self.data.get(page_id, {})
