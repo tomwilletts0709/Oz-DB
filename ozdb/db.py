@@ -149,20 +149,18 @@ def main():
             print(f"unrecognized command: {input_buffer.buffer}")
 
 
-def prepare_statement(statement_type: StatementType, input_buffer) -> PrepareResult:
-    match PrepareResult:
+def prepare_statement(statement_type: StatementType, input_buffer) -> tuple[PrepareResult, Optional[Row]]:
+    if input_buffer.buffer.startswith("insert"):
         args_assigned = re.match(r"insert\s+(\d+)\s+(\w+)\s+(\w+)", input_buffer.buffer)
-        if args_assigned:
-        case statement_type = StatementType.STATEMENT_INSERT
-            print ("This is where we would prepare an insert statement")
-        case row_to_insert.id = int(args_assigned.group(1))
-                row_to_insert.username = args_assigned.group(2)
-                row_to_insert.email = args_assigned.group(3)
-        if args_assigned <= 3:
-            return PrepareResult.PREPARE_SYNTAX_ERROR
-        else:
-            return PrepareResult.PREPARE_SUCCESS
-
+        if not args_assigned: 
+            return PrepareResult.PREPARE_SYNTAX_ERROR, None
+        row = Row(id=int(args_assigned.group(1)), username=args_assigned.group(2), email=args_assigned.group(3))
+        return PrepareResult.PREPARE_SUCCESS, StatementType.STATEMENT_SELECT ,row
+    
+    elif input_buffer.buffer.startswith("select"):
+        return PrepareResult.PREPARE_SUCCESS, StatementType.STATEMENT_SELECT, None
+    else: 
+        return PrepareResult.PREPARE_UNRECOGNIZED_STATEMENT, None
 
 def execute_insert(statement_type: StatementType, table: Table, row_to_insert: Row) -> None:
     if table.num_rows >= TABLE_MAX_ROWS: 
