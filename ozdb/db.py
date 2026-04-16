@@ -48,7 +48,7 @@ class Pager:
 
 @dataclass
 class Table: 
-    Pager: pager
+    page: int
     root_page_num: int
     num_rows: int
 
