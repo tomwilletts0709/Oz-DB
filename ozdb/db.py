@@ -147,8 +147,8 @@ def close_input_buffer(input_buffer):
     input_buffer.buffer = None
 
 def main(): 
+    table = new_table()
     input_buffer = new_input_buffer() 
-
     while True: 
         print_prompt()
         read_input(input_buffer)
