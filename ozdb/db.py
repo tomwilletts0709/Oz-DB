@@ -36,6 +36,11 @@ class StatementType(Enum):
     ROW_TO_INSERT = auto()
     EXECUTE_SUCCESS = auto()
 
+@dataclass 
+class Statement: 
+    type: StatementType
+    row_to_insert: Optional[Row] = None
+
 
 def table_max_pages() -> int: 
     return 400
