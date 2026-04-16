@@ -2,16 +2,15 @@ import sys
 import re
 import struct
 from enum import Enum, auto
-from dataclasses import dataclass
-from typing import Optional, Protocol, Field
+from dataclasses import dataclass, field    
+from typing import Optional, Protocol
 
 
-@dataclass 
+
 class MetaCommandResult(Enum):
     META_COMMAND_SUCCESS = auto()
     META_COMMAND_UNRECOGNIZED_COMMAND = auto()
 
-@dataclass
 class PrepareResult(Enum): 
     PREPARE_SUCCESS = auto()
     PREPARE_UNRECOGNIZED_STATEMENT = auto()
@@ -22,8 +21,8 @@ class PrepareResult(Enum):
 @dataclass(slots = True)
 class Row: 
     id: int =
-    username: str = Field(default="")
-    email: str = Field(default="")
+    username: str = field(default="")
+    email: str = field(default="")  
 
 @dataclass 
 class InputBuffer: 
@@ -87,7 +86,12 @@ def row_slot(table: Table, row_num: int) -> int:
         row_offset = row_num % ROWS_PER_PAGE
         byte_offset = row_offset * ROW_SIZE
         return page + byte_offset
-    
+
+def new_table() -> Table:
+    pass 
+
+def free_table(table: Table) -> None: 
+    for i in 
 
 
 def meta_command_result() -> MetaCommandResult:
@@ -103,7 +107,6 @@ def execute_statement(statement_type: StatementType):
             print("This is where we would do an insert")
         case StatementType.STATEMENT_SELECT:
             print("This is where we would do a select")
-
 
 
 def new_input_buffer() -> InputBuffer:
@@ -157,5 +160,27 @@ def prepare_statement(statement_type: StatementType, input_buffer) -> PrepareRes
     return PrepareResult.PREPARE_SUCCESS
 
 
-def execute_statement(statement_type: StatementType):
-    print(f"executed: {statement_type}")
+def execute_insert(statement_type: StatementType, table: Table, row_to_insert: Row) -> None:
+    if table.num_rows >= TABLE_MAX_ROWS: 
+        print("Error: Table full.")
+        return
+    
+    row_slot = row_slot(table, table.num_rows)
+    serialize_row(row_to_insert, row_slot)
+    table.num_rows += 1
+    return EXECUTE_SUCCESS
+
+def execute_select(statement_type: StatementType, table: Table) -> None:
+    for i in range(table.num_rows): 
+        row_slot = row_slot(table, i)
+        row = deserialize_row(row_slot)
+        print(f"({row.id}, {row.username}, {row.email})")
+    return EXECUTE_SUCCESS
+
+def execute_statement(statement_type: StatementType, table: Table, row_to_insert: Row) -> None:
+    match statement_type:
+        case StatementType.STATEMENT_INSERT:
+            return execute_insert(statement_type, table, row_to_insert)
+        case StatementType.STATEMENT_SELECT:
+            return execute_select(statement_type, table)
+        
