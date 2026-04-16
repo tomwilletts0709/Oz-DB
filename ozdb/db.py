@@ -89,8 +89,19 @@ def row_slot(table: Table, row_num: int) -> int:
         return page + byte_offset
 
 def new_table() -> Table:
-    pass 
+    pager = Pager (
+        file_descriptor = 0,
+        file_length = 0,
+        num_pages = 0,
+        pages = [None] * table_max_pages()
+    )
 
+    return Table (
+        pager = pager, 
+        root_page_num = 0,
+        num_rows = 0
+    )
+    
 def free_table(table: Table) -> None: 
     for i in range(table.Pager.num_pages): 
         if table.Pager.pages[i] is not None: 
