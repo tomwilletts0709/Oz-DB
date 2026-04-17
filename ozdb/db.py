@@ -65,6 +65,11 @@ class Cursor:
     cell_num: int
     end_of_table: bool
 
+@dataclass 
+class file_descriptor: 
+    file_descriptor: int
+    file_length: int
+
 ID_SIZE = 4
 USERNAME_SIZE = 32
 EMAIL_SIZE = 255
@@ -201,3 +206,24 @@ def execute_statement(statement_type: StatementType, table: Table, row_to_insert
         case StatementType.STATEMENT_SELECT:
             return execute_select(statement_type, table)
         
+def get_page(table: Table, page_num: int) -> bytes:
+    if page_num > table_max_pages():
+        print(f"tried to fetch page number out of bounds: %d > %d" % (page_num, table_max_pages()))
+        sys.exit(1)
+    if table.Pager.pages[page_num] is None:
+        page = bytearray(PAGE_SIZE)
+        table.Pager.pages[page_num] = page
+
+        if page_num < table.Pager.num_pages:
+            with open(table.Pager.file_descriptor, 'rb') as f:
+                f.seek(page_num * PAGE_SIZE)
+                page_data = f.read(PAGE_SIZE)
+                page[:len(page_data)] = page_data
+    return table.Pager.pages[page_num]     
+
+def pager_flush(table: Table, page_num: int, pager: Pager) -> None: 
+    if pager.pages[page_num] is None: 
+        print(f"Tried to flush null page")
+        sys.exit(1)
+    
+    off_t = 
