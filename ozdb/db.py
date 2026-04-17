@@ -93,7 +93,7 @@ def row_slot(table: Table, row_num: int) -> int:
         byte_offset = row_offset * ROW_SIZE
         return page + byte_offset
 
-def new_table() -> Table:
+def db_open() -> Table:
     pager = Pager (
         file_descriptor = 0,
         file_length = 0,
