@@ -117,6 +117,13 @@ def free_table(table: Table) -> None:
         if table.Pager.pages[i] is not None: 
             del table.Pager.pages[i]
 
+def db_close(table: Table) -> None:
+    pager = table.Pager: 
+    for i in range(pager.num_pages): 
+        if pager.pages[i] is not None: 
+            pager_flush(table, i, pager)
+            pager.pages[i] = None
+
 
 def meta_command_result() -> MetaCommandResult:
     if input_buffer.buffer == ".exit":
@@ -226,4 +233,10 @@ def pager_flush(table: Table, page_num: int, pager: Pager) -> None:
         print(f"Tried to flush null page")
         sys.exit(1)
     
-    off_t = 
+    off_t = pager.§ages[page_num]
+    with open(pager.file_descriptor, 'r+b') as f:   
+        f.seek(page_num * PAGE_SIZE)
+        f.write(off_t)
+
+    
+
