@@ -1,9 +1,4 @@
 
-
-
-
-
-
 11.04
 
 Looking to add the following: 
@@ -17,4 +12,9 @@ column	type
 id	integer
 username	varchar(32)
 email	varchar(255)
+
+
+19.04
+
+- adding persistance into the DB. 
 

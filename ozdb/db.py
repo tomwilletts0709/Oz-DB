@@ -18,6 +18,7 @@ class PrepareResult(Enum):
     PREPARE_NEGATIVE_ID = auto()
     PREPARE_STRING_TOO_LONG = auto()
 
+
 @dataclass(slots = True)
 class Row: 
     id: int
@@ -63,6 +64,7 @@ class Cursor:
     table: Table
     page_num: int
     cell_num: int
+    row_num: int
     end_of_table: bool
 
 @dataclass 
@@ -88,6 +90,20 @@ def serialize_row(row: Row) -> bytes:
 def deserialize_row(data: bytes) -> Row:
     unpacked_data = struct.unpack(ROW_FORMAT, data)
     return Row(id=int.from_bytes(unpacked_data[0], 'little'), username=unpacked_data[1].decode('utf-8').rstrip('\x00'), email=unpacked_data[2].decode('utf-8').rstrip('\x00'))
+
+def table_start(table: Table) -> Table: 
+    cursor = bytearray(Cursor)
+    cursor.table = table
+    cursor.row_num
+    cursor.end_of_table = (table.num_rows == 0)
+    return cursor
+
+def table_end(table: Table) -> Table: 
+    cursor = bytearray(Cursor)
+    cursor.table = table
+    cursor.row_num = table.num_rows
+    cursor.end_of_table = True
+    return cursor
 
 def row_slot(table: Table, row_num: int) -> int:
     page_num = row_num // ROWS_PER_PAGE
