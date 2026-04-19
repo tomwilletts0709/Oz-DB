@@ -11,7 +11,7 @@ It is intentionally framed this way because the goal is not to ship a polished d
 
 ## Why I Am Building It
 
-The point of this project is depth, not polish. I want to understand how a database actually works under the hood, and the best way I know to do that is to implement one myself.
+The point of the project is following the Feynman principle that if you can't build it you can't understsand it. I essentially want to understand how a database actually works under the hood, and the best way I know to do that is to implement one myself.
 
 This repository is therefore a study log as much as a codebase.
 

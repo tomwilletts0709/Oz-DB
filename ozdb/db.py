@@ -18,6 +18,10 @@ class PrepareResult(Enum):
     PREPARE_NEGATIVE_ID = auto()
     PREPARE_STRING_TOO_LONG = auto()
 
+class NodeType(Enum): 
+    INTERNAL = "internal"
+    LEAF = "leaf"
+
 
 @dataclass(slots = True)
 class Row: 
@@ -105,7 +109,7 @@ def table_end(table: Table) -> Table:
     cursor.end_of_table = True
     return cursor
 
-def row_slot(table: Table, row_num: int) -> int:
+def cursor_value(table: Table, row_num: int) -> int:
     page_num = row_num // ROWS_PER_PAGE
     page = table.Pager.pages[page_num]
     if page is None: 
@@ -113,6 +117,14 @@ def row_slot(table: Table, row_num: int) -> int:
         row_offset = row_num % ROWS_PER_PAGE
         byte_offset = row_offset * ROW_SIZE
         return page + byte_offset
+    
+def cursor_advance(cursor: Cursor) -> None:
+    cursor.row_num += 1
+    if cursor.row_num, >= cursor.table.num_rows: 
+        cursor.end_of_table = True
+    return None
+
+
 
 def db_open() -> Table:
     pager = Pager (
@@ -134,7 +146,7 @@ def free_table(table: Table) -> None:
             del table.Pager.pages[i]
 
 def db_close(table: Table) -> None:
-    pager = table.Pager: 
+    pager = table.Pager
     for i in range(pager.num_pages): 
         if pager.pages[i] is not None: 
             pager_flush(table, i, pager)
