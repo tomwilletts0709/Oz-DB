@@ -22,6 +22,32 @@ class NodeType(Enum):
     INTERNAL = "internal"
     LEAF = "leaf"
 
+# Common Node Hear Layout
+NODE_TYPE_SIZE = sizeof(NodeType)
+NODE_TYPE_OFFSET = 0
+IS_ROOT_SIZE = sizeof(bool)
+IS_ROOT_OFFSET = NODE_TYPE_SIZE
+PARENT_POINTER_SIZE = sizeof(int)
+PARENT_POINTER_OFFSET = IS_ROOT_OFFSET + IS_ROOT_SIZE
+COMMON_NODE_HEADER_SIZE = NODE_TYPE_SIZE + IS_ROOT_SIZE + PARENT_POINTER_SIZE
+
+# Leaf Node Header Layout
+LEAF_NODE_NUM_CELLS_SIZE = sizeof(int)
+LEAF_NODE_NUM_CELLS_OFFSET = COMMON_NODE_HEADER_SIZE
+LEAF_NODE_HEADER_SIZE = COMMON_NODE_HEADER_SIZE + LEAF_NODE_NUM_CELLS_SIZE
+
+#Leaf Node Body Layout
+LEAF_NODE_KEY_SIZE = sizeof(int)
+LEAF_NODE_KEY_OFFSET = 0
+LEAF_NODE_VALUE_SIZE = ROW_SIZE
+LEAF_NODE_VALUE_OFFSET = LEAF_NODE_KEY_OFFSET + LEAF_NODE_KEY_SIZE
+LEAF_NODE_CELL_SIZE = LEAF_NODE_KEY_SIZE + LEAF_NODE_VALUE_SIZE
+LEAF_NODE_SPACE_FOR_CELLS = PAGE_SIZE - LEAF_NODE_HEADER_SIZE
+LEAF_NODE_MAX_CELLS = LEAF_NODE_SPACE_FOR_CELLS // LEAF
+_NODE_CELL_SIZE
+
+
+
 
 @dataclass(slots = True)
 class Row: 
@@ -68,7 +94,6 @@ class Cursor:
     table: Table
     page_num: int
     cell_num: int
-    row_num: int
     end_of_table: bool
 
 @dataclass 
@@ -87,6 +112,21 @@ PAGE_SIZE = 4096
 ROWS_PER_PAGE = PAGE_SIZE // ROW_SIZE
 TABLE_MAX_ROWS = ROWS_PER_PAGE * table_max_pages()
 
+
+# btree 
+def leaf_node_num_cells(node: bytes) -> int:
+    return struct.unpack_from("i", node, LEAF_NODE_NUM_CELLS_OFFSET)[0]
+
+def leaf_node_cell(node: bytes, cell_num: int) -> bytes:
+    return node[LEAF_NODE_HEADER_SIZE + cell_num * LEAF_NODE_CELL_SIZE : LEAF_NODE_HEADER_SIZE + (cell_num + 1) * LEAF_NODE_CELL_SIZE]
+
+def leaf_node_key(node: bytes, cell_num: int) -> int:
+    return struct.unpack_from("i", leaf_node_cell(node, cell_num), LEAF_NODE_KEY_OFFSET)[0]
+def leaf_node_value(node: bytes, cell_num: int) -> bytes:    
+    return leaf_node_cell(node, cell_num)[LEAF_NODE_VALUE_OFFSET : LEAF_NODE_VALUE_OFFSET + LEAF_NODE_VALUE_SIZE]
+def initialize_leaf_node(node: bytes) -> None:
+    struct.pack_into("i", node, NODE_TYPE_OFFSET, NodeType.LEAF.value)
+    struct.pack_into("i", node, LEAF_NODE_NUM_CELLS_OFFSET, 0)
 
 def serialize_row(row: Row) -> bytes:
     return struct.pack(ROW_FORMAT, row.id.to_bytes(ID_SIZE, 'little'), row.username.encode('utf-8'), row.email.encode('utf-8'))
