@@ -114,6 +114,24 @@ TABLE_MAX_ROWS = ROWS_PER_PAGE * table_max_pages()
 
 
 # btree 
+
+def get_node_type(node: bytes) -> NodeType:
+    return NodeType(struct.unpack_from("i", node, NODE_TYPE_OFFSET)[0])
+
+def set_node_type(node: bytes, NodeType: NodeType) -> None:
+    struct.pack_into("i", node, NODE_TYPE_OFFSET, NodeType.value)
+
+def is_node_root(node: bytes) -> bool:
+    return struct.unpack_from("?", node, IS_ROOT_OFFSET)[0]
+
+def set_node_root(node: bytes, is_root: bool) -> None:
+    struct.pack_into("?", node, IS_ROOT_OFFSET, is_root)
+
+def node_parent(node: bytes) -> int: 
+    return struct.unpack_from("i", node, PARENT_POINTER_OFFSET)[0]
+
+def set_
+
 def leaf_node_num_cells(node: bytes) -> int:
     return struct.unpack_from("i", node, LEAF_NODE_NUM_CELLS_OFFSET)[0]
 
@@ -127,6 +145,20 @@ def leaf_node_value(node: bytes, cell_num: int) -> bytes:
 def initialize_leaf_node(node: bytes) -> None:
     struct.pack_into("i", node, NODE_TYPE_OFFSET, NodeType.LEAF.value)
     struct.pack_into("i", node, LEAF_NODE_NUM_CELLS_OFFSET, 0)
+
+
+def leaf_node_insert(Cursor: Cursor, key: int, value: bytes) -> None: 
+    node = Cursor.get_page(Cursor.table, Cursor.page_num)
+    num_cells = leaf_node_num_cells(node)
+    if num_cells >= LEAF_NODE_MAX_CELLS:
+        print(f"Need to implement splitting a leaf node.\n")
+        sys.exit(1)
+    
+    if Cursor.cell_num < num_cells:
+        #make room for new cell
+        for i in range(num_cells, Cursor.cell_num, -1):
+            struct
+
 
 def serialize_row(row: Row) -> bytes:
     return struct.pack(ROW_FORMAT, row.id.to_bytes(ID_SIZE, 'little'), row.username.encode('utf-8'), row.email.encode('utf-8'))
