@@ -105,3 +105,4 @@ pytest
 This repository is a learning project in progress, not a finished database.
 
 That distinction is intentional. It keeps the scope honest and makes it clear that the value here is in the process of building and understanding, not in pretending the work is already done.
+# ecomm_tom
