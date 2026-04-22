@@ -248,6 +248,9 @@ def new_input_buffer() -> InputBuffer:
 def print_prompt(): 
     print("db > ", end='')
 
+def print_row(row: Row) -> None:
+    print(f"({row.id}, {row.username}, {row.email})")
+
 def read_input(input_buffer): 
     bytes_read = sys.stdin.readline()
     input_buffer.buffer = bytes_read.strip()
