@@ -4,12 +4,14 @@ this is the tokenizer module, which provides functionality for tokenizing text d
 
 from dataclasses import dataclass
 from typing import List, Optional
+import re
 
 
 @dataclass 
 class Token:
     value: str
     type: str
+
 
 @dataclass
 class Keyword(Token):
@@ -19,6 +21,7 @@ class Keyword(Token):
     INSERT = "INSERT"
     UPDATE = "UPDATE"
     DELETE = "DELETE"
+
 
 
 
